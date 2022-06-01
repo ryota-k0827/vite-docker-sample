@@ -1,0 +1,22 @@
+version: "3"
+
+services:
+  vite-docker-sample:
+    build: ./dockerfile
+    container_name: vite-docker-sample
+    hostname: vite-docker-sample
+    tty: true
+    environment:
+      - NODE_ENV=DEVELOPMENT
+      - PORT=3003
+    volumes:
+      - ./app:/workspace:cached
+      - vite-docker-sample-modules:/workspace/node_modules  # node_module用のvolume => 高速化
+    ports:
+      - 3003:3003
+    working_dir: /workspace
+    command: sh -c "yarn install && yarn dev --host"
+
+volumes:
+  vite-docker-sample-modules:
+    name: vite-docker-sample-modules

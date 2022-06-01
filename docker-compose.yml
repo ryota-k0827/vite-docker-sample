@@ -2,21 +2,37 @@ version: "3"
 
 services:
   vite-docker-sample:
-    build: ./dockerfile
+    # Dockerfileの指定
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # コンテナ名
     container_name: vite-docker-sample
+    # ホスト名（コンテナ間でのみ有効）
     hostname: vite-docker-sample
+    # コンテナが正常終了するのを防ぐ設定（継続起動）
     tty: true
+    # 環境変数
     environment:
       - NODE_ENV=DEVELOPMENT
       - PORT=3003
+    # ボリューム
     volumes:
-      - ./app:/workspace:cached
-      - vite-docker-sample-modules:/workspace/node_modules  # node_module用のvolume => 高速化
+      - ./:/workspace:cached
+      - vite-docker-sample-volumes:/home
+    # ポート番号
     ports:
       - 3003:3003
+    # 作業ディレクトリの指定
     working_dir: /workspace
-    command: sh -c "yarn install && yarn dev --host"
+    # コンテナ起動時の実行コマンド
+    # command: sh -c "cd /workspace/app && yarn install && yarn dev --host"
+    # ネットワーク設定
+    networks:
+      - vite-docker-sample-networks
+
+networks:
+  vite-docker-sample-networks:
 
 volumes:
-  vite-docker-sample-modules:
-    name: vite-docker-sample-modules
+  vite-docker-sample-volumes:
